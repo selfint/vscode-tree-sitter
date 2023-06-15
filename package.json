@@ -20,6 +20,7 @@
     ]
   },
   "scripts": {
+    "preinstall": "node -v",
     "postinstall": "./node_modules/.bin/electron-rebuild -v 22.0.0",
     "vscode:prepublish": "yarn run compile",
     "compile": "tsc -p ./",
