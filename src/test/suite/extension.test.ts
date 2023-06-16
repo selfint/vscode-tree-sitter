@@ -8,10 +8,19 @@ import * as vscode from "vscode";
 suite("Extension Test Suite", () => {
     void vscode.window.showInformationMessage("Start all tests.");
 
-    test("Sample test", async () => {
-        assert.strictEqual(-1, [1, 2, 3].indexOf(5));
-        assert.strictEqual(-1, [1, 2, 3].indexOf(0));
+    test("Test Rust parser", async () => {
+        const Parser = await import("tree-sitter");
+        //@ts-expect-error ignore missing types
+        const Rust = (await import("tree-sitter-rust")) as object;
+        const p = new Parser();
 
-        await vscode.commands.executeCommand("vscode-tree-sitter.helloWorld");
+        p.setLanguage(Rust);
+
+        const tree = p.parse("fn main() {}");
+
+        assert.strictEqual(
+            tree.rootNode.toString(),
+            "(source_file (function_item name: (identifier) parameters: (parameters) body: (block)))"
+        );
     });
 });

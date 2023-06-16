@@ -25,7 +25,7 @@
     "vscode:prepublish": "yarn run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "pretest": "yarn run compile && yarn run lint",
+    "pretest": "./node_modules/.bin/electron-rebuild -v 22.0.0 -o tree-sitter-rust && yarn run compile && yarn run lint",
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js"
   },
@@ -41,6 +41,7 @@
     "eslint": "^8.33.0",
     "glob": "^8.1.0",
     "mocha": "^10.1.0",
+    "tree-sitter-rust": "0.20.1",
     "typescript": "^4.9.4"
   },
   "dependencies": {

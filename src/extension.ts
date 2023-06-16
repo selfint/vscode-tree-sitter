@@ -1,6 +1,5 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
-import Parser = require("tree-sitter");
 import * as vscode from "vscode";
 
 // This method is called when your extension is activated
@@ -19,8 +18,6 @@ export function activate(context: vscode.ExtensionContext): void {
         void vscode.window.showInformationMessage("Hello World from vscode-tree-sitter!");
 
         context.subscriptions.push(disposable);
-
-        const p = new Parser();
     });
 }
 
