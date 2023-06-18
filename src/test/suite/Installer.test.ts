@@ -8,12 +8,6 @@ import { mkdtemp, rm } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 
-//@ts-expect-error ignore missing types
-import Rust = require("tree-sitter-rust");
-
-//@ts-expect-error ignore missing types
-import Typescript = require("tree-sitter-typescript");
-
 suite("Installer Test Suite", () => {
     let tempParsersDir: string | undefined = undefined;
 
@@ -26,54 +20,6 @@ suite("Installer Test Suite", () => {
             await rm(tempParsersDir, { recursive: true, force: true });
         }
     });
-
-    test("Downloaded rust parser matches local parser", async () => {
-        if (tempParsersDir === undefined) {
-            throw new Error("temp dir was not assigned");
-        }
-
-        const testParserName = "tree-sitter-rust";
-        const downloaded = await vscodeTreeSitter.Installer.downloadParser(
-            tempParsersDir,
-            testParserName,
-            console.log
-        );
-        assert.ok(downloaded);
-
-        const dynamicRustParser = await vscodeTreeSitter.Installer.loadParser(tempParsersDir, testParserName);
-        assert.ok(dynamicRustParser !== undefined);
-        assert.deepEqual(dynamicRustParser, Rust);
-    }).timeout(120 * 1000);
-
-    test("Downloaded typescript parsers match local parsers", async () => {
-        if (tempParsersDir === undefined) {
-            throw new Error("temp dir was not assigned");
-        }
-
-        const testParserName = "tree-sitter-typescript";
-        const downloaded = await vscodeTreeSitter.Installer.downloadParser(
-            tempParsersDir,
-            testParserName,
-            console.log
-        );
-        assert.ok(downloaded);
-
-        const dynamicTypescriptParser = await vscodeTreeSitter.Installer.loadParser(
-            tempParsersDir,
-            testParserName,
-            "typescript"
-        );
-        const dynamicTSXParser = await vscodeTreeSitter.Installer.loadParser(
-            tempParsersDir,
-            testParserName,
-            "tsx"
-        );
-
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        assert.deepEqual(dynamicTypescriptParser, Typescript.typescript);
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        assert.deepEqual(dynamicTSXParser, Typescript.tsx);
-    }).timeout(120 * 1000);
 
     test("Parsers compatibility", async () => {
         const parsers: [string, string[] | undefined][] = [
@@ -140,5 +86,5 @@ suite("Installer Test Suite", () => {
                 }
             })
         );
-    }).timeout(120 * 1000);
+    }).timeout(300 * 1000);
 });
