@@ -35,10 +35,12 @@ export async function loadParser(
 export async function downloadParser(
     parsersDir: string,
     parserName: string,
-    onData?: (data: string) => void
+    onData?: (data: string) => void,
+    npmCommand = "npm",
+    electronRebuildCommand = "electron-rebuild"
 ): Promise<boolean> {
     const parserDir = getParserDir(parsersDir, parserName);
-    const installCmd = `npm install --prefix ${parserDir} ${parserName}@"<=${TREE_SITTER_VERSION}"`;
+    const installCmd = `${npmCommand} install --prefix ${parserDir} ${parserName}@"<=${TREE_SITTER_VERSION}"`;
     const installOptions = { cwd: parsersDir };
 
     const installErr = await runCmd(installCmd, installOptions, onData);
@@ -49,7 +51,7 @@ export async function downloadParser(
         return false;
     }
 
-    const rebuildCmd = `electron-rebuild -v ${ELECTRON_VERSION}`;
+    const rebuildCmd = `${electronRebuildCommand} -v ${ELECTRON_VERSION}`;
     const rebuildOptions = { cwd: parserDir };
 
     const rebuildErr = await runCmd(rebuildCmd, rebuildOptions, onData);

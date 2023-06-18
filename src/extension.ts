@@ -10,6 +10,11 @@ export { Parser, FileTree, Installer };
 export function activate(context: vscode.ExtensionContext): void {
     const parsersDir = resolve(join(context.extensionPath, "parsers"));
 
+    const npmCommand = "npm";
+    const electronRebuildCommand = resolve(
+        join(context.extensionPath, "node_modules", ".bin", "electron-rebuild")
+    );
+
     context.subscriptions.push(
         vscode.commands.registerCommand("vscode-tree-sitter.test", async () => {
             const editor = vscode.window.activeTextEditor;
@@ -36,8 +41,12 @@ export function activate(context: vscode.ExtensionContext): void {
                         title: `Installing ${parserName}`,
                     },
                     async (progress) => {
-                        return await Installer.downloadParser(parsersDir, parserName, (data) =>
-                            progress.report({ message: data, increment: number++ })
+                        return await Installer.downloadParser(
+                            parsersDir,
+                            parserName,
+                            (data) => progress.report({ message: data, increment: number++ }),
+                            npmCommand,
+                            electronRebuildCommand
                         );
                     }
                 );
