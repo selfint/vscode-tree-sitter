@@ -20,13 +20,12 @@
     ]
   },
   "scripts": {
-    "preinstall": "node -v",
-    "rebuild:dev": "./node_modules/.bin/electron-rebuild -v 22.0.0 -b --types prod,dev",
-    "rebuild": "./node_modules/.bin/electron-rebuild -v 22.0.0 --types prod",
+    "rebuild": "electron-rebuild -v 22.0.0",
+    "rebuild:dev": "electron-rebuild -v 22.0.0 --types prod,dev -b",
     "vscode:prepublish": "yarn run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "pretest": "yarn run compile && yarn run lint",
+    "pretest": "yarn run rebuild:dev && yarn run compile && yarn run lint",
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js",
     "unittest": "yarn run pretest && node ./out/test/unitTest.js"
@@ -36,14 +35,17 @@
     "@types/glob": "^8.0.1",
     "@types/mocha": "^10.0.1",
     "@types/node": "16.x",
+    "@types/tree-sitter": "./vendor/node-tree-sitter",
+    "@types/uuid": "^9.0.2",
     "@types/vscode": "^1.79.0",
     "@typescript-eslint/eslint-plugin": "^5.49.0",
     "@typescript-eslint/parser": "^5.49.0",
     "@vscode/test-electron": "^2.2.2",
     "eslint": "^8.33.0",
     "glob": "^8.1.0",
-    "mocha": "^10.1.0",
+    "mocha": "^10.2.0",
     "tree-sitter-rust": "0.20.1",
+    "tree-sitter-typescript": "0.20.1",
     "typescript": "^4.9.4"
   },
   "dependencies": {

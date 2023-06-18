@@ -1,19 +1,12 @@
 import * as assert from "assert";
+import * as vscodeTreeSitter from "../../extension";
 
-// You can import and use all API from the 'vscode' module
-// as well as import your extension to test it
-import * as vscode from "vscode";
-// import * as myExtension from '../../extension';
-
-import Parser = require("tree-sitter");
 //@ts-expect-error ignore missing types
 import Rust = require("tree-sitter-rust");
 
-suite("Extension Test Suite", () => {
-    void vscode.window.showInformationMessage("Start all tests.");
-
+suite("vendor/node-tree-sitter Test Suite", () => {
     test("Test Rust parser", () => {
-        const p = new Parser();
+        const p = new vscodeTreeSitter.Parser();
         p.setLanguage(Rust);
 
         const tree = p.parse("fn main() {}");
@@ -25,11 +18,10 @@ suite("Extension Test Suite", () => {
     });
 
     test("Test TSNode methods", () => {
-        const p = new Parser();
+        const p = new vscodeTreeSitter.Parser();
         p.setLanguage(Rust);
 
         const rootNode = p.parse("fn main() {}").rootNode;
-
-        console.log(rootNode.child(0));
+        assert.ok(rootNode.child(0) !== null);
     });
 });
