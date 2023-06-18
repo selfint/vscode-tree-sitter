@@ -14,7 +14,7 @@ import Rust = require("tree-sitter-rust");
 //@ts-expect-error ignore missing types
 import Typescript = require("tree-sitter-typescript");
 
-suite.only("Installer Test Suite", () => {
+suite("Installer Test Suite", () => {
     let tempParsersDir: string | undefined = undefined;
     // const tempParsersDir = "/tmp/parsers";
     beforeEach(async () => {
@@ -75,7 +75,7 @@ suite.only("Installer Test Suite", () => {
         assert.deepEqual(dynamicTSXParser, Typescript.tsx);
     }).timeout(120 * 1000);
 
-    test.only("Parsers compatibility", async () => {
+    test("Parsers compatibility", async () => {
         const parsers: [string, string[] | undefined][] = [
             ["tree-sitter-rust", undefined],
             ["tree-sitter-typescript", ["typescript", "tsx"]],
