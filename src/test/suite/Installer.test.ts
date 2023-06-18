@@ -16,7 +16,7 @@ import Typescript = require("tree-sitter-typescript");
 
 suite("Installer Test Suite", () => {
     let tempParsersDir: string | undefined = undefined;
-    // const tempParsersDir = "/tmp/parsers";
+
     beforeEach(async () => {
         tempParsersDir = await mkdtemp(join(tmpdir(), "vscode-tree-sitter-download-test-"));
     });

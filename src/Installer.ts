@@ -50,7 +50,7 @@ export async function downloadParser(
     }
 
     const rebuildCmd = `electron-rebuild -v ${ELECTRON_VERSION}`;
-    const rebuildOptions: ExecOptions = { cwd: parserDir };
+    const rebuildOptions = { cwd: parserDir };
 
     const rebuildErr = await runCmd(rebuildCmd, rebuildOptions, onData);
     if (rebuildErr !== undefined) {
