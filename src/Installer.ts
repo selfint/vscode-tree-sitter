@@ -23,7 +23,7 @@ export async function loadParser(
     symbol: string | undefined = undefined
 ): Promise<object | undefined> {
     const nodeBindingsPath = getNodeBindingsPath(parsersDir, parserName);
-    console.log(`Loading bindings from ${nodeBindingsPath}`);
+
     if (symbol === undefined) {
         return (await import(nodeBindingsPath)) as object;
     } else {
@@ -44,6 +44,7 @@ export async function downloadParser(
     const installErr = await runCmd(installCmd, installOptions, onData);
 
     if (installErr !== undefined) {
+        console.log("Failed to install, err:");
         console.log(installErr);
         return false;
     }
@@ -53,6 +54,7 @@ export async function downloadParser(
 
     const rebuildErr = await runCmd(rebuildCmd, rebuildOptions, onData);
     if (rebuildErr !== undefined) {
+        console.log("Failed to rebuild, err:");
         console.log(rebuildErr);
         return false;
     }
@@ -65,7 +67,6 @@ async function runCmd(
     options: ExecOptions,
     onData?: (data: string) => void
 ): Promise<ExecException | undefined> {
-    console.debug(`Running with options: ${JSON.stringify(options)} cmd: ${cmd}`);
     const err = await new Promise<ExecException | null>((resolve) => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const proc = exec(cmd, options, (err, _stdout, _stderr) => {
