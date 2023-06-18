@@ -2,6 +2,7 @@ import * as path from "path";
 import { ExecException, ExecOptions, exec } from "child_process";
 
 const TREE_SITTER_VERSION = "0.20.1";
+// TODO: can we use process.versions.electron for this?
 const ELECTRON_VERSION = "22.0.0";
 
 export function getParserDir(parsersDir: string, parserName: string): string {
