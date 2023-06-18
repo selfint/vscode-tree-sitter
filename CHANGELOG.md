@@ -2,8 +2,11 @@
 
 All notable changes to the "vscode-tree-sitter" extension will be documented in this file.
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
-
 ## [Unreleased]
 
-- Initial release
+## 0.0.1
+
+### Added
+
+-   `Installer` - wrapper around `npm` and `electron-rebuild` that downloads and loads parsers at runtime.
+-   `FileTree` - wrapper around `node-tree-sitter.Parser` and `node-tree-sitter.Parser.Tree`.
