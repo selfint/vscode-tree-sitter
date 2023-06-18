@@ -2240,7 +2240,7 @@ tree-sitter-rust@0.20.1:
   dependencies:
     nan "^2.14.0"
 
-tree-sitter-typescript@^0.20.1:
+tree-sitter-typescript@0.20.1:
   version "0.20.1"
   resolved "https://registry.yarnpkg.com/tree-sitter-typescript/-/tree-sitter-typescript-0.20.1.tgz#6b338a1414f5ed13cc39e60275ddeaa0f25870a9"
   integrity sha512-wqpnhdVYX26ATNXeZtprib4+mF2GlYQB1cjRPibYGxDRiugx5OfjWwLE4qPPxEGdp2ZLSmZVesGUjLWzfKo6rA==
@@ -2319,11 +2319,6 @@ util-deprecate@^1.0.1, util-deprecate@~1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
   integrity sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==
-
-uuid@^9.0.0:
-  version "9.0.0"
-  resolved "https://registry.yarnpkg.com/uuid/-/uuid-9.0.0.tgz#592f550650024a38ceb0c562f2f6aa435761efb5"
-  integrity sha512-MXcSTerfPa4uqyzStbRoTgt5XIe3x5+42+q1sDuy3R5MDk66URdLMOZe5aPX/SQd+kuYAh0FdP/pO28IkQyTeg==
 
 wcwidth@^1.0.1:
   version "1.0.1"
