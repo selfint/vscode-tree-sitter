@@ -14,8 +14,8 @@
   "contributes": {
     "commands": [
       {
-        "command": "vscode-tree-sitter.helloWorld",
-        "title": "Hello World"
+        "command": "vscode-tree-sitter.test",
+        "title": "VSCode Tree Sitter: Test tree-sitter on current file"
       }
     ]
   },
@@ -25,7 +25,7 @@
     "vscode:prepublish": "yarn run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "pretest": "yarn run rebuild:dev && yarn run compile && yarn run lint",
+    "pretest": "yarn run compile && yarn run lint",
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js",
     "unittest": "yarn run pretest && node ./out/test/unitTest.js"
