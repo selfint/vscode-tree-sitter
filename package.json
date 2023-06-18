@@ -3,10 +3,16 @@
   "displayName": "vscode-tree-sitter",
   "description": "Use node-tree-sitter inside vscode",
   "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/selfint/vscode-tree-sitter"
+  },
+  "license": "MIT",
   "engines": {
     "vscode": "^1.79.0"
   },
   "categories": [
+    "Programming Languages",
     "Other"
   ],
   "activationEvents": [],
@@ -20,9 +26,9 @@
     ]
   },
   "scripts": {
+    "vscode:prepublish": "yarn install && yarn run compile && yarn install --production && yarn run rebuild",
     "rebuild": "electron-rebuild -v 22.0.0",
     "rebuild:dev": "electron-rebuild -v 22.0.0 --types prod,dev -b",
-    "vscode:prepublish": "yarn run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "pretest": "yarn run compile && yarn run lint",

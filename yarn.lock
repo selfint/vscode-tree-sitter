@@ -219,11 +219,6 @@
     nan "^2.17.0"
     prebuild-install "^7.1.1"
 
-"@types/uuid@^9.0.2":
-  version "9.0.2"
-  resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-9.0.2.tgz#ede1d1b1e451548d44919dc226253e32a6952c4b"
-  integrity sha512-kNnC1GFBLuhImSnV7w4njQkUiJi0ZXUycu1rUaouPqiKlXkh77JKgdRnTAp1x5eBwcIwbtI+3otwzuIDEuDoxQ==
-
 "@types/vscode@^1.79.0":
   version "1.79.1"
   resolved "https://registry.yarnpkg.com/@types/vscode/-/vscode-1.79.1.tgz#ab568315f9c844a8f4fa8f168b2d6dbf1f58dd02"

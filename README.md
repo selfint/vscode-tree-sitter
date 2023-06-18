@@ -10,7 +10,9 @@ Dynamically download and load tree-sitter parsers.
 
 This extensions requires:
 
--   `npm`: Can be installed from [nodejs.org](https://nodejs.org/en/download) ([instructions](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)).
+-   `node` & `npm`: Can be installed from [nodejs.org](https://nodejs.org/en/download) ([instructions](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)).
+-   `electron-rebuild`: After `npm` is installed, `electron-rebuild` can be installed by `npm i -g electron-rebuild`.
+    In the future, this requirement will be pre-packaged in the extension.
 
 ## Extension Settings
 

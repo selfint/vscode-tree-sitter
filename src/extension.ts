@@ -11,9 +11,7 @@ export function activate(context: vscode.ExtensionContext): void {
     const parsersDir = resolve(join(context.extensionPath, "parsers"));
 
     const npmCommand = "npm";
-    const electronRebuildCommand = resolve(
-        join(context.extensionPath, "node_modules", ".bin", "electron-rebuild")
-    );
+    const electronRebuildCommand = "electron-rebuild";
 
     context.subscriptions.push(
         vscode.commands.registerCommand("vscode-tree-sitter.test", async () => {
