@@ -3,6 +3,7 @@ on: [push]
 jobs:
     build:
         strategy:
+            fail-fast: true
             matrix:
                 os: [macos-latest, ubuntu-latest, windows-latest]
         runs-on: ${{ matrix.os }}
@@ -13,6 +14,8 @@ jobs:
               uses: actions/setup-node@v1
               with:
                   node-version: 16.x
+            - name: Pull submodules
+              run: git submodule update --init --recursive
             - name: Install root project dependencies
               run: yarn && yarn run rebuild:dev
             - name: Run tests
