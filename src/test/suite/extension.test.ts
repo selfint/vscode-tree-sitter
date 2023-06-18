@@ -5,15 +5,15 @@ import * as assert from "assert";
 import * as vscode from "vscode";
 // import * as myExtension from '../../extension';
 
+import Parser = require("tree-sitter");
+//@ts-expect-error ignore missing types
+import Rust = require("tree-sitter-rust");
+
 suite("Extension Test Suite", () => {
     void vscode.window.showInformationMessage("Start all tests.");
 
-    test("Test Rust parser", async () => {
-        const Parser = await import("tree-sitter");
-        //@ts-expect-error ignore missing types
-        const Rust = (await import("tree-sitter-rust")) as object;
+    test("Test Rust parser", () => {
         const p = new Parser();
-
         p.setLanguage(Rust);
 
         const tree = p.parse("fn main() {}");
@@ -22,5 +22,14 @@ suite("Extension Test Suite", () => {
             tree.rootNode.toString(),
             "(source_file (function_item name: (identifier) parameters: (parameters) body: (block)))"
         );
+    });
+
+    test("Test TSNode methods", () => {
+        const p = new Parser();
+        p.setLanguage(Rust);
+
+        const rootNode = p.parse("fn main() {}").rootNode;
+
+        console.log(rootNode.child(0));
     });
 });
