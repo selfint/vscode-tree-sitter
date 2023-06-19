@@ -9,16 +9,16 @@ jobs:
         runs-on: ${{ matrix.os }}
         steps:
             - name: Checkout
-              uses: actions/checkout@v2
+              uses: actions/checkout@v3
             - name: Install Node.js
-              uses: actions/setup-node@v1
+              uses: actions/setup-node@v3
               with:
-                  node-version: 16.x
+                  node-version: 16
             - name: Pull submodules
               run: git submodule update --init --recursive
             - name: Install root project dependencies
               run: yarn && yarn run rebuild:dev
             - name: Run tests
-              uses: GabrielBB/xvfb-action@v1.0
+              uses: coactions/setup-xvfb@v1
               with:
                   run: yarn test
