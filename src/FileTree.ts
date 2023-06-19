@@ -11,10 +11,10 @@ export class FileTree {
     }
 
     /**
-     * Get a FileBlocks object for a given file
+     * Get a FileTree object for a given file
      * @param language file language, needs to be a tree-sitter language object
      * @param text file text
-     * @returns FileBlocks object
+     * @returns FileTree object
      */
     public static openFile<T>(language: T extends undefined ? never : T, text: string): FileTree {
         const parser = new Parser();
