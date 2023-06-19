@@ -16,10 +16,7 @@ export class FileTree {
      * @param text file text
      * @returns FileBlocks object
      */
-    public static openFile<T>(
-        language: T extends Promise<unknown> ? never : T extends undefined ? never : T,
-        text: string
-    ): FileTree {
+    public static openFile<T>(language: T extends undefined ? never : T, text: string): FileTree {
         const parser = new Parser();
         parser.setLanguage(language);
 

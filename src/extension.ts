@@ -55,7 +55,7 @@ export function activate(context: vscode.ExtensionContext): void {
                 }
             }
 
-            const language = await Installer.loadParser(parsersDir, parserName);
+            const language = Installer.loadParser(parsersDir, parserName);
             if (language === undefined) {
                 void vscode.window.showErrorMessage(`Failed to load parser for language ${languageId}`);
                 return;

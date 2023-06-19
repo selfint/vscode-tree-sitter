@@ -18,17 +18,20 @@ function getNodeBindingsPath(parsersDir: string, parserName: string): string {
     );
 }
 
-export async function loadParser(
+export function loadParser(
     parsersDir: string,
     parserName: string,
     symbol: string | undefined = undefined
-): Promise<object | undefined> {
+): object | undefined {
     const nodeBindingsPath = getNodeBindingsPath(parsersDir, parserName);
 
+    // TODO: get esbuild to work with 'await import' instead of 'require'
     if (symbol === undefined) {
-        return (await import(nodeBindingsPath)) as object;
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        return require(nodeBindingsPath) as object;
     } else {
-        const lib = (await import(nodeBindingsPath)) as Record<string, object>;
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const lib = require(nodeBindingsPath) as Record<string, object>;
         return lib[symbol];
     }
 }

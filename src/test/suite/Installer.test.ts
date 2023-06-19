@@ -67,7 +67,7 @@ suite("Installer Test Suite", () => {
 
                 const p = new vscodeTreeSitter.Parser();
                 if (symbols === undefined) {
-                    const language = await vscodeTreeSitter.Installer.loadParser(tempParsersDir, parserName);
+                    const language = vscodeTreeSitter.Installer.loadParser(tempParsersDir, parserName);
                     assert.doesNotThrow(() => p.setLanguage(language));
                 } else {
                     if (symbols.length === 0) {
@@ -75,7 +75,7 @@ suite("Installer Test Suite", () => {
                     }
 
                     for (const symbol of symbols) {
-                        const language = await vscodeTreeSitter.Installer.loadParser(
+                        const language = vscodeTreeSitter.Installer.loadParser(
                             tempParsersDir,
                             parserName,
                             symbol
