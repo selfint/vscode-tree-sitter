@@ -33,6 +33,7 @@ async function getLanguage(parsersDir: string, languageId: string): Promise<obje
         );
 
         if (!downloaded) {
+            void vscode.window.showErrorMessage(`Failed to download parser for language ${languageId}`);
             rmSync(parserDir, { recursive: true, force: true });
             return undefined;
         }
