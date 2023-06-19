@@ -1,5 +1,8 @@
 on: [push]
 
+env:
+    INSTALLLER_TIMEOUT: 10m
+
 jobs:
     build:
         strategy:
@@ -21,4 +24,4 @@ jobs:
             - name: Run tests
               uses: coactions/setup-xvfb@v1
               with:
-                  run: INSTALLER_TIMEOUT=10m yarn test
+                  run: yarn test
