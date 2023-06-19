@@ -2,7 +2,7 @@
 **/**
 .*
 
-!out/*.js
+!out/extension.js
 !node_modules/tree-sitter
 !.gitmodules
 !LICENSE

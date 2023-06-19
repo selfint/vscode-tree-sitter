@@ -1,5 +1,6 @@
 {
   "name": "vscode-tree-sitter",
+  "publisher": "selfint",
   "displayName": "vscode-tree-sitter",
   "description": "Use node-tree-sitter inside vscode",
   "version": "0.0.1",
@@ -21,12 +22,13 @@
     "commands": [
       {
         "command": "vscode-tree-sitter.test",
-        "title": "VSCode Tree Sitter: Test tree-sitter on current file"
+        "title": "VSCode Tree Sitter (debug command): Test tree-sitter on current file"
       }
     ]
   },
   "scripts": {
-    "vscode:prepublish": "yarn install && yarn run compile && yarn install --production && yarn run rebuild",
+    "vscode:prepublish": "yarn run bundle",
+    "bundle": "esbuild ./src/extension.ts --bundle --outfile=out/extension.js --external:vscode --external:tree-sitter --format=cjs --platform=node --target=es2020 --minify",
     "rebuild": "electron-rebuild -v 22.0.0",
     "rebuild:dev": "electron-rebuild -v 22.0.0 --types prod,dev -b",
     "compile": "tsc -p ./",
@@ -45,6 +47,7 @@
     "@typescript-eslint/eslint-plugin": "^5.49.0",
     "@typescript-eslint/parser": "^5.49.0",
     "@vscode/test-electron": "^2.2.2",
+    "esbuild": "^0.18.4",
     "eslint": "^8.33.0",
     "glob": "^8.1.0",
     "mocha": "^10.2.0",
