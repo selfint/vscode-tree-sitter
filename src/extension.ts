@@ -62,7 +62,23 @@ export function activate(context: vscode.ExtensionContext): void {
             }
 
             const fileTree = FileTree.openFile(language, text);
-            await vscode.window.showInformationMessage(fileTree.tree.rootNode.toString());
+            const tdcp = new (class implements vscode.TextDocumentContentProvider {
+                readonly uri = vscode.Uri.parse("vscode-tree-sitter://syntaxtree/tree.clj");
+
+                provideTextDocumentContent(_uri: vscode.Uri, _ct: vscode.CancellationToken): string {
+                    return fileTree.tree.rootNode.toString().replace(/ \(/g, "\n(");
+                }
+            })();
+
+            context.subscriptions.push(
+                vscode.workspace.registerTextDocumentContentProvider("vscode-tree-sitter", tdcp)
+            );
+
+            await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(tdcp.uri), {
+                viewColumn: vscode.ViewColumn.Beside,
+                preserveFocus: true,
+                preview: true,
+            });
         })
     );
 }
