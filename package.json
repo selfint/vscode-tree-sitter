@@ -30,13 +30,12 @@
     "vscode:prepublish": "yarn run bundle",
     "bundle": "esbuild ./src/extension.ts --bundle --outfile=out/extension.js --external:vscode --external:tree-sitter --format=cjs --platform=node --target=es2020 --minify",
     "rebuild": "electron-rebuild -v 22.0.0",
-    "rebuild:dev": "electron-rebuild -v 22.0.0 --types prod,dev -b",
+    "rebuild:dev": "electron-rebuild -v 22.0.0 --types prod,dev",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "pretest": "yarn run compile && yarn run lint",
     "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js",
-    "unittest": "yarn run pretest && node ./out/test/unitTest.js"
+    "test": "mocha ./out/test/runTest.js"
   },
   "devDependencies": {
     "@types/glob": "^8.0.1",

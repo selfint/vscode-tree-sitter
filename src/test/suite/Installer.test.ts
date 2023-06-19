@@ -8,7 +8,8 @@ import { mkdtemp, rm } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 
-suite("Installer Test Suite", () => {
+suite("Installer Test Suite", function () {
+    this.timeout(process.env.INSTALLER_TIMEOUT ?? 10 * 60 * 1000);
     let tempParsersDir: string | undefined = undefined;
 
     beforeEach(async () => {
@@ -86,5 +87,5 @@ suite("Installer Test Suite", () => {
                 }
             })
         );
-    }).timeout(300 * 1000);
+    });
 });
