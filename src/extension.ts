@@ -20,6 +20,7 @@ export function activate(context: vscode.ExtensionContext): void {
         new Map([
             ["typescriptreact", ["typescript", "tsx"]],
             ["typescript", ["typescript", "typescript"]],
+            ["javascriptreact", ["javascript", undefined]],
         ])
     );
 

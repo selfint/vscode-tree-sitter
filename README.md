@@ -23,12 +23,15 @@ This extension contributes the following settings:
 ## Known Issues
 
 -   Languages with `languageId` that don't match their tree-sitter parser name aren't loaded correctly.
-    Known problematic languages are:
+    These languages need to be manually configured.
+
+    Pre-configured problematic languages are:
 
     | Language   | LanguageId      | tree-sitter parser                |
     | ---------- | --------------- | --------------------------------- |
     | Typescript | typescript      | tree-sitter-typescript.typescript |
     | TSX        | typescriptreact | tree-sitter-typescript.tsx        |
+    | JSX        | javascriptreact | tree-sitter-javascript            |
 
 ## Release Notes
 
