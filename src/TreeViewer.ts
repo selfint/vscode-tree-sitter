@@ -6,8 +6,14 @@ import { FileTree } from "./FileTree";
 
 export { Parser, FileTree, Installer };
 
-async function getLanguage(parsersDir: string, languageId: string): Promise<object | undefined> {
-    const parserName = `tree-sitter-${languageId}`;
+async function getLanguage(
+    parsersDir: string,
+    languageId: string,
+    languageIdOverrides?: Map<string, [string, string | undefined]>
+): Promise<object | undefined> {
+    const [id, symbol] = languageIdOverrides?.get(languageId) ?? [languageId, undefined];
+
+    const parserName = `tree-sitter-${id}`;
     const parserDir = Installer.getParserDir(parsersDir, parserName);
 
     const npmCommand = "npm";
@@ -39,7 +45,7 @@ async function getLanguage(parsersDir: string, languageId: string): Promise<obje
         }
     }
 
-    const language = Installer.loadParser(parsersDir, parserName);
+    const language = Installer.loadParser(parsersDir, parserName, symbol);
     if (language === undefined) {
         void vscode.window.showErrorMessage(`Failed to load parser for language ${languageId}`);
         return undefined;
@@ -55,13 +61,15 @@ export class TreeViewer implements vscode.TextDocumentContentProvider {
 
     private fileTree: FileTree | undefined;
     private parsersDir: string;
+    private languageIdOverrides: Map<string, [string, string | undefined]> | undefined;
 
-    constructor(parsersDir: string) {
+    constructor(parsersDir: string, languageIdOverrides?: Map<string, [string, string | undefined]>) {
         this.parsersDir = parsersDir;
+        this.languageIdOverrides = languageIdOverrides;
     }
 
     public async viewFileTree(document: vscode.TextDocument): Promise<void> {
-        const language = await getLanguage(this.parsersDir, document.languageId);
+        const language = await getLanguage(this.parsersDir, document.languageId, this.languageIdOverrides);
         if (language === undefined) {
             return;
         }
@@ -71,6 +79,18 @@ export class TreeViewer implements vscode.TextDocumentContentProvider {
     }
 
     private disposables: vscode.Disposable[] = [
+        vscode.workspace.onDidOpenTextDocument(async (event: vscode.TextDocument) => {
+            if (
+                // The event is emitted before the document is updated in the active text editor
+                // this guard ensures we only run when the active text editor document
+                // had its language id changed
+                event.uri === vscode.window.activeTextEditor?.document.uri &&
+                // ignore our editor
+                event.uri.toString() !== this.uri.toString()
+            ) {
+                await this.viewFileTree(event);
+            }
+        }),
         vscode.workspace.onDidChangeTextDocument((event: vscode.TextDocumentChangeEvent) => {
             if (
                 event.document.uri === vscode.window.activeTextEditor?.document.uri &&
@@ -82,14 +102,12 @@ export class TreeViewer implements vscode.TextDocumentContentProvider {
         }),
         vscode.window.onDidChangeActiveTextEditor(async (event: vscode.TextEditor | undefined) => {
             if (
-                event?.document === undefined ||
+                event?.document !== undefined &&
                 // ignore our editor
-                event.document.uri.toString() === this.uri.toString()
+                event.document.uri.toString() !== this.uri.toString()
             ) {
-                return;
+                await this.viewFileTree(event.document);
             }
-
-            await this.viewFileTree(event.document);
         }),
         vscode.window.onDidChangeVisibleTextEditors((editors) => {
             if (!editors.some((e) => e.document.uri.toString() === this.uri.toString())) {

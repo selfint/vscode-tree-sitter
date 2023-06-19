@@ -18,11 +18,7 @@ function getNodeBindingsPath(parsersDir: string, parserName: string): string {
     );
 }
 
-export function loadParser(
-    parsersDir: string,
-    parserName: string,
-    symbol: string | undefined = undefined
-): object | undefined {
+export function loadParser(parsersDir: string, parserName: string, symbol?: string): object | undefined {
     const nodeBindingsPath = getNodeBindingsPath(parsersDir, parserName);
 
     // TODO: get esbuild to work with 'await import' instead of 'require'

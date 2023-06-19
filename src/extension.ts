@@ -15,7 +15,13 @@ export function activate(context: vscode.ExtensionContext): void {
         mkdirSync(parsersDir, { recursive: true });
     }
 
-    const treeViewer = new TreeViewer(parsersDir);
+    const treeViewer = new TreeViewer(
+        parsersDir,
+        new Map([
+            ["typescriptreact", ["typescript", "tsx"]],
+            ["typescript", ["typescript", "typescript"]],
+        ])
+    );
 
     context.subscriptions.push(
         vscode.workspace.registerTextDocumentContentProvider("vscode-tree-sitter", treeViewer)
