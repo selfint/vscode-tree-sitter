@@ -22,7 +22,21 @@
 			"script": "pretest:debug",
 			"label": "pre-test:debug",
 			"problemMatcher": "$tsc-watch",
-			"isBackground": true,
+			"isBackground": false,
+			"presentation": {
+				"reveal": "never"
+			},
+			"group": {
+				"kind": "build",
+				"isDefault": false
+			}
+		},
+		{
+			"type": "npm",
+			"script": "pretest",
+			"label": "pre-test",
+			"problemMatcher": "$tsc-watch",
+			"isBackground": false,
 			"presentation": {
 				"reveal": "never"
 			},

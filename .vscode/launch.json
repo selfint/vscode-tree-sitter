@@ -39,6 +39,16 @@
 				"${workspaceFolder}/out/test/runTest.js"
 			],
 			"preLaunchTask": "pre-test:debug"
+		},
+		{
+			"name": "lldb Unit Tests",
+			"type": "lldb",
+			"request": "launch",
+			"program": "node",
+			"args": [
+				"${workspaceFolder}/out/test/unitTest.js"
+			],
+			"preLaunchTask": "pre-test"
 		}
 	]
 }
