@@ -27,13 +27,14 @@
     ]
   },
   "scripts": {
-    "vscode:prepublish": "yarn run bundle",
+    "vscode:prepublish": "yarn install && yarn run bundle",
+    "postinstall": "yarn run rebuild",
     "bundle": "esbuild ./src/extension.ts --bundle --outfile=out/extension.js --external:vscode --external:tree-sitter --format=cjs --platform=node --target=es2020 --minify",
     "rebuild": "electron-rebuild -v 22.0.0",
     "rebuild:dev": "electron-rebuild -v 22.0.0 --types prod,dev",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "pretest": "yarn run compile && yarn run lint",
+    "pretest": "yarn run rebuild:dev && yarn run compile && yarn run lint",
     "lint": "eslint src --ext ts",
     "test": "mocha ./out/test/runTest.js"
   },
