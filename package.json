@@ -21,12 +21,13 @@
   },
   "scripts": {
     "preinstall": "node -v",
-    "rebuild:dev": "./node_modules/.bin/electron-rebuild -v 22.0.0 -b --types prod,dev",
-    "rebuild": "./node_modules/.bin/electron-rebuild -v 22.0.0 --types prod",
+    "rebuild:dev": "electron-rebuild -v 22.0.0 -b --types prod,dev",
+    "rebuild": "electron-rebuild -v 22.0.0 --types prod",
     "vscode:prepublish": "yarn run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "pretest": "yarn run compile && yarn run lint",
+    "pretest:debug": "yarn run rebuild:dev -b && yarn run compile && yarn run lint",
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js",
     "unittest": "yarn run pretest && node ./out/test/unitTest.js"
