@@ -7,28 +7,28 @@ import * as vscode from "vscode";
 
 import Parser = require("tree-sitter");
 //@ts-expect-error ignore missing types
-import Rust = require("tree-sitter-rust");
+import Javascript = require("tree-sitter-javascript");
 
 suite("Extension Test Suite", () => {
     void vscode.window.showInformationMessage("Start all tests.");
 
     test("Test Rust parser", () => {
         const p = new Parser();
-        p.setLanguage(Rust);
+        p.setLanguage(Javascript);
 
-        const tree = p.parse("fn main() {}");
+        const tree = p.parse("function main() {}");
 
         assert.strictEqual(
             tree.rootNode.toString(),
-            "(source_file (function_item name: (identifier) parameters: (parameters) body: (block)))"
+            "(program (function_declaration name: (identifier) parameters: (formal_parameters) body: (statement_block)))"
         );
     });
 
     test("Test TSNode methods", () => {
         const p = new Parser();
-        p.setLanguage(Rust);
+        p.setLanguage(Javascript);
 
-        const rootNode = p.parse("fn main() {}").rootNode;
+        const rootNode = p.parse("function main() {}").rootNode;
 
         console.log(rootNode.child(0));
     });
