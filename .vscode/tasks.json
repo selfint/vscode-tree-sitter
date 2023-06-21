@@ -23,9 +23,6 @@
 			"label": "pre-test:debug",
 			"problemMatcher": "$tsc-watch",
 			"isBackground": false,
-			"presentation": {
-				"reveal": "never"
-			},
 			"group": {
 				"kind": "build",
 				"isDefault": false
@@ -37,9 +34,6 @@
 			"label": "pre-test",
 			"problemMatcher": "$tsc-watch",
 			"isBackground": false,
-			"presentation": {
-				"reveal": "never"
-			},
 			"group": {
 				"kind": "build",
 				"isDefault": false

@@ -35,6 +35,9 @@
 			"type": "lldb",
 			"request": "launch",
 			"program": "node",
+			"sourceMap": {
+				"${workspaceFolder}/vendor/node-tree-sitter/src": "${workspaceFolder}/node_modules/tree-sitter/src"
+			},
 			"args": [
 				"${workspaceFolder}/out/test/runTest.js"
 			],
@@ -45,6 +48,9 @@
 			"type": "lldb",
 			"request": "launch",
 			"program": "node",
+			"sourceMap": {
+				"${workspaceFolder}/node_modules/tree-sitter/src": "${workspaceFolder}/vendor/node-tree-sitter/src",
+			},
 			"args": [
 				"${workspaceFolder}/out/test/unitTest.js"
 			],
