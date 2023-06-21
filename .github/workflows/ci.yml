@@ -17,6 +17,9 @@ jobs:
               uses: actions/setup-node@v3
               with:
                   node-version: 16
+            - name: Install windows build tools
+              if: runner.os == 'windows'
+              run: npm install --global windows-build-tools
             - name: Pull submodules
               run: git submodule update --init --recursive
             - name: Install root project dependencies
