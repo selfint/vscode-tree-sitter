@@ -35,6 +35,7 @@
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "pretest": "yarn run rebuild:dev && yarn run compile && yarn run lint",
+    "pretest:debug": "yarn run rebuild:dev -b && yarn run compile && yarn run lint",
     "lint": "eslint src --ext ts",
     "test": "mocha ./out/test/runTest.js"
   },
