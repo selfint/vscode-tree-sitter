@@ -324,7 +324,7 @@
   integrity sha512-G8hZ6XJiHnuhQKR7ZmysCeJWE08o8T0AXtk5darsCaTVsYZhhgUrq53jizaR2FvsoeCwJhlmwTjkXBY5Pn/ZHw==
 
 "@types/tree-sitter@./vendor/node-tree-sitter":
-  version "0.20.2"
+  version "0.20.4"
   dependencies:
     nan "^2.17.0"
     prebuild-install "^7.1.1"
@@ -2381,7 +2381,7 @@ tree-sitter-typescript@0.20.1:
     nan "^2.14.0"
 
 tree-sitter@./vendor/node-tree-sitter:
-  version "0.20.2"
+  version "0.20.4"
   dependencies:
     nan "^2.17.0"
     prebuild-install "^7.1.1"
