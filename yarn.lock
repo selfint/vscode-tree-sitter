@@ -323,12 +323,6 @@
   resolved "https://registry.yarnpkg.com/@types/semver/-/semver-7.5.0.tgz#591c1ce3a702c45ee15f47a42ade72c2fd78978a"
   integrity sha512-G8hZ6XJiHnuhQKR7ZmysCeJWE08o8T0AXtk5darsCaTVsYZhhgUrq53jizaR2FvsoeCwJhlmwTjkXBY5Pn/ZHw==
 
-"@types/tree-sitter@./vendor/node-tree-sitter":
-  version "0.20.4"
-  dependencies:
-    nan "^2.17.0"
-    prebuild-install "^7.1.1"
-
 "@types/vscode@^1.79.0":
   version "1.79.1"
   resolved "https://registry.yarnpkg.com/@types/vscode/-/vscode-1.79.1.tgz#ab568315f9c844a8f4fa8f168b2d6dbf1f58dd02"
@@ -2380,8 +2374,10 @@ tree-sitter-typescript@0.20.1:
   dependencies:
     nan "^2.14.0"
 
-tree-sitter@./vendor/node-tree-sitter:
+tree-sitter@^0.20.4:
   version "0.20.4"
+  resolved "https://registry.yarnpkg.com/tree-sitter/-/tree-sitter-0.20.4.tgz#7d9d4f769fc05342ef43e5559f7ff34b0fc48327"
+  integrity sha512-rjfR5dc4knG3jnJNN/giJ9WOoN1zL/kZyrS0ILh+eqq8RNcIbiXA63JsMEgluug0aNvfQvK4BfCErN1vIzvKog==
   dependencies:
     nan "^2.17.0"
     prebuild-install "^7.1.1"
