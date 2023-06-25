@@ -43,6 +43,7 @@
     "@types/glob": "^8.0.1",
     "@types/mocha": "^10.0.1",
     "@types/node": "16.x",
+    "@types/tree-sitter": "./vendor/node-tree-sitter",
     "@types/vscode": "^1.79.0",
     "@typescript-eslint/eslint-plugin": "^5.49.0",
     "@typescript-eslint/parser": "^5.49.0",
@@ -57,6 +58,6 @@
   },
   "dependencies": {
     "@electron/rebuild": "^3.2.13",
-    "tree-sitter": "^0.20.4"
+    "tree-sitter": "./vendor/node-tree-sitter"
   }
 }
