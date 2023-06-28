@@ -19,13 +19,7 @@ export class FileTree {
         this.tree = parser.parse(text);
     }
 
-    /**
-     * Get a FileTree object for a given file
-     * @param language file language, needs to be a tree-sitter language object
-     * @param text file text
-     * @returns FileTree object
-     */
-    public static async openFile(language: Language, text: string): Promise<FileTree> {
+    public static async new(language: Language, text: string): Promise<FileTree> {
         await Parser.init();
         const parser = new Parser();
         parser.setLanguage(language);

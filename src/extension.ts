@@ -8,6 +8,12 @@ import { TreeViewer } from "./TreeViewer";
 
 export { Parser, FileTree, Installer };
 
+export const didInit = new Promise<void>((resolve) => {
+    void Parser.init().then(() => {
+        resolve();
+    });
+});
+
 export function activate(context: vscode.ExtensionContext): void {
     const parsersDir = resolve(join(context.extensionPath, "parsers"));
 
@@ -21,6 +27,7 @@ export function activate(context: vscode.ExtensionContext): void {
             ["typescriptreact", ["tree-sitter-typescript", ["tsx", "tree-sitter-tsx"]]],
             ["typescript", ["tree-sitter-typescript", ["typescript", "tree-sitter-typescript"]]],
             ["javascriptreact", ["tree-sitter-javascript", undefined]],
+            ["csharp", ["tree-sitter-c-sharp", undefined]],
         ])
     );
 

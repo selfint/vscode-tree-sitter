@@ -2,6 +2,7 @@ import * as path from "path";
 import * as tar from "tar";
 import { ExecException, ExecOptions, exec } from "child_process";
 import { Language } from "web-tree-sitter";
+import { didInit } from "./extension";
 import { existsSync } from "fs";
 import { mkdir } from "fs/promises";
 
@@ -9,7 +10,7 @@ export function getParserDir(parsersDir: string, npmPackageName: string): string
     return path.resolve(path.join(parsersDir, npmPackageName));
 }
 
-function getWasmBindingsPath(parsersDir: string, npmPackageName: string, parserName?: string): string {
+export function getWasmBindingsPath(parsersDir: string, npmPackageName: string, parserName?: string): string {
     // this path assumes the library was rebuilt from the parser dir
     return path.resolve(
         path.join(getParserDir(parsersDir, npmPackageName), `${parserName ?? npmPackageName}.wasm`)
@@ -26,6 +27,7 @@ export async function loadParser(
         return undefined;
     } else {
         try {
+            await didInit;
             return await Language.load(wasmPath);
         } catch (error) {
             console.log(`Failed to load ${wasmPath}, due to error:`);

@@ -1,11 +1,9 @@
 import * as Installer from "./Installer";
 import * as vscode from "vscode";
-import { existsSync, rmSync } from "node:fs";
-import Parser = require("web-tree-sitter");
 import { FileTree } from "./FileTree";
 import { Language } from "web-tree-sitter";
-
-export { Parser, FileTree, Installer };
+import { didInit } from "./extension";
+import { existsSync } from "node:fs";
 
 type LanguageIdOverrides = Map<string, [string, [string, string] | undefined]>;
 async function getLanguage(
@@ -20,12 +18,12 @@ async function getLanguage(
     const subdirectory = override?.[0];
     const parserName = override?.[1] ?? npmPackageName;
 
-    const parserDir = Installer.getParserDir(parsersDir, parserName);
+    const parserWasmBindings = Installer.getWasmBindingsPath(parsersDir, npmPackageName, parserName);
 
     const npmCommand = "npm";
     const treeSitterCli = "tree-sitter";
 
-    if (!existsSync(parserDir)) {
+    if (!existsSync(parserWasmBindings)) {
         let number = 0;
         const downloaded = await vscode.window.withProgress(
             {
@@ -47,7 +45,6 @@ async function getLanguage(
 
         if (!downloaded) {
             void vscode.window.showErrorMessage(`Failed to download parser for language ${languageId}`);
-            rmSync(parserDir, { recursive: true, force: true });
             return undefined;
         }
     }
@@ -76,14 +73,14 @@ export class TreeViewer implements vscode.TextDocumentContentProvider {
     }
 
     public async viewFileTree(document: vscode.TextDocument): Promise<void> {
-        await Parser.init();
+        await didInit;
 
         const language = await getLanguage(this.parsersDir, document.languageId, this.languageIdOverrides);
         if (language === undefined) {
             return;
         }
 
-        this.fileTree = await FileTree.openFile(language, document.getText());
+        this.fileTree = await FileTree.new(language, document.getText());
         this.eventEmitter.fire(this.uri);
     }
 

@@ -13,7 +13,6 @@ suite("Installer Test Suite", function () {
     let tempParsersDir: string | undefined = undefined;
 
     beforeEach(async () => {
-        await vscodeTreeSitter.Parser.init();
         tempParsersDir = await mkdtemp(join(tmpdir(), "vscode-tree-sitter-download-test-"));
     });
 
