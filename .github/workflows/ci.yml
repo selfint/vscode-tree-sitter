@@ -25,7 +25,7 @@ jobs:
           npm install --global node-gyp@latest
           npm prefix -g | % {npm config set node_gyp "$_\node_modules\node-gyp\bin\node-gyp.js"}
       - name: Install root project dependencies
-        run: yarn && yarn run rebuild:dev
+        run: yarn
       - name: Run tests
         uses: coactions/setup-xvfb@v1
         with:
