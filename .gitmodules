@@ -1,3 +1,0 @@
-[submodule "vendor/node-tree-sitter"]
-	path = vendor/node-tree-sitter
-	url = https://github.com/selfint/node-tree-sitter.git
