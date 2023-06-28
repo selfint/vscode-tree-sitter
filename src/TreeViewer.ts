@@ -13,7 +13,10 @@ async function getLanguage(
     languageId: string,
     languageIdOverrides?: LanguageIdOverrides
 ): Promise<Language | undefined> {
-    const [npmPackageName, override] = languageIdOverrides?.get(languageId) ?? [languageId, undefined];
+    const [npmPackageName, override] = languageIdOverrides?.get(languageId) ?? [
+        `tree-sitter-${languageId}`,
+        undefined,
+    ];
     const subdirectory = override?.[0];
     const parserName = override?.[1] ?? npmPackageName;
 
@@ -73,6 +76,8 @@ export class TreeViewer implements vscode.TextDocumentContentProvider {
     }
 
     public async viewFileTree(document: vscode.TextDocument): Promise<void> {
+        await Parser.init();
+
         const language = await getLanguage(this.parsersDir, document.languageId, this.languageIdOverrides);
         if (language === undefined) {
             return;
