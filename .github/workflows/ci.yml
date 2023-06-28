@@ -1,7 +1,7 @@
 on: [push]
 
 env:
-  INSTALLLER_TIMEOUT: 10m
+  INSTALLER_TIMEOUT: 10m
 
 jobs:
   build:
@@ -17,11 +17,13 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16
-      # - name: Install windows build tools
-      #   if: runner.os == 'windows'
-      #   run: yarn add -D windows-build-tools
-      - name: Pull submodules
-        run: git submodule update --init --recursive
+      # https://github.com/actions/setup-node/issues/68#issuecomment-536238341
+      - name: Patch node gyp on windows to support Visual Studio 2019
+        if: runner.os == 'windows'
+        shell: powershell
+        run: |
+          npm install --global node-gyp@latest
+          npm prefix -g | % {npm config set node_gyp "$_\node_modules\node-gyp\bin\node-gyp.js"}
       - name: Install root project dependencies
         run: yarn && yarn run rebuild:dev
       - name: Run tests
