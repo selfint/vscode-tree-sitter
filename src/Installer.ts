@@ -1,81 +1,109 @@
 import * as path from "path";
+import * as tar from "tar";
 import { ExecException, ExecOptions, exec } from "child_process";
+import { Language } from "web-tree-sitter";
+import { existsSync } from "fs";
+import { mkdir } from "fs/promises";
+import { parserFinishedInit } from "./extension";
 
-const TREE_SITTER_VERSION = "0.20.1";
-// TODO: can we use process.versions.electron for this?
-const ELECTRON_VERSION = "22.0.0";
-
-export function getParserDir(parsersDir: string, parserName: string): string {
-    // add '-module' to parser name, since if node module == prefix string
-    // weird behavior happens
-    return path.resolve(path.join(parsersDir, `${parserName}-module`));
+export function getParserDir(parsersDir: string, npmPackageName: string): string {
+    return path.resolve(path.join(parsersDir, npmPackageName));
 }
 
-function getNodeBindingsPath(parsersDir: string, parserName: string): string {
-    // this path assumes the library has been installed via npm install --prefix, not just cloned with git
+export function getWasmBindingsPath(parsersDir: string, npmPackageName: string, parserName?: string): string {
+    // this path assumes the library was rebuilt from the parser dir
     return path.resolve(
-        path.join(getParserDir(parsersDir, parserName), "node_modules", parserName, "bindings", "node")
+        path.join(getParserDir(parsersDir, npmPackageName), `${parserName ?? npmPackageName}.wasm`)
     );
 }
 
-export function loadParser(parsersDir: string, parserName: string, symbol?: string): object | undefined {
-    const nodeBindingsPath = getNodeBindingsPath(parsersDir, parserName);
-
-    // TODO: get esbuild to work with 'await import' instead of 'require'
-    if (symbol === undefined) {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        return require(nodeBindingsPath) as object;
+export async function loadParser(
+    parsersDir: string,
+    npmPackageName: string,
+    parserName?: string
+): Promise<Language | undefined> {
+    const wasmPath = getWasmBindingsPath(parsersDir, npmPackageName, parserName);
+    if (!existsSync(wasmPath)) {
+        return undefined;
     } else {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        const lib = require(nodeBindingsPath) as Record<string, object>;
-        return lib[symbol];
+        try {
+            await parserFinishedInit;
+            return await Language.load(wasmPath);
+        } catch (error) {
+            console.log(`Failed to load ${wasmPath}, due to error:`);
+            console.log(error);
+            return undefined;
+        }
     }
 }
 
 export async function downloadParser(
     parsersDir: string,
-    parserName: string,
+    parserNpmPackage: string,
+    subdirectory?: string,
     onData?: (data: string) => void,
-    npmCommand = "npm",
-    electronRebuildCommand = "electron-rebuild"
+    npm = "npm",
+    treeSitterCli = "tree-sitter"
 ): Promise<boolean> {
-    const parserDir = getParserDir(parsersDir, parserName);
-    const installCmd = `${npmCommand} install --prefix ${parserDir} ${parserName}@"<=${TREE_SITTER_VERSION}"`;
-    const installOptions = { cwd: parsersDir };
+    const parserDir = getParserDir(parsersDir, parserNpmPackage);
+    await mkdir(parserDir, { recursive: true });
 
-    const installErr = await runCmd(installCmd, installOptions, onData);
+    const installResult = await runCmd(
+        `${npm} pack --verbose --json --pack-destination ${parserDir} ${parserNpmPackage}`,
+        {},
+        onData
+    );
 
-    if (installErr !== undefined) {
-        console.log("Failed to install, err:");
-        console.log(installErr);
+    let tarFilename: string | undefined = undefined;
+    switch (installResult.status) {
+        case "err":
+            console.log("Failed to install, err:");
+            console.log(installResult.result);
+            return false;
+
+        case "ok":
+            tarFilename = (JSON.parse(installResult.result) as { filename: string }[])[0].filename;
+    }
+
+    try {
+        await tar.extract({
+            file: path.resolve(path.join(parserDir, tarFilename)),
+            cwd: parserDir,
+            strip: 1,
+            onentry: (entry) => onData?.(entry.path),
+        });
+    } catch (e: unknown) {
+        onData?.(`failed to extract ${tarFilename} to ${parserDir}, due to err: ${JSON.stringify(e)}`);
         return false;
     }
 
-    const rebuildCmd = `${electronRebuildCommand} -v ${ELECTRON_VERSION}`;
-    const rebuildOptions = { cwd: parserDir };
+    const buildResult = await runCmd(
+        `${treeSitterCli} build-wasm ${subdirectory ?? ""}`,
+        { cwd: parserDir },
+        onData
+    );
+    switch (buildResult.status) {
+        case "err":
+            onData?.(`Failed to build .wasm parser, err: ${JSON.stringify(buildResult.result)}`);
+            return false;
 
-    const rebuildErr = await runCmd(rebuildCmd, rebuildOptions, onData);
-    if (rebuildErr !== undefined) {
-        console.log("Failed to rebuild, err:");
-        console.log(rebuildErr);
-        return false;
+        case "ok":
+            return true;
     }
-
-    return true;
 }
 
+type Result<T, E> = { status: "ok"; result: T } | { status: "err"; result: E };
 async function runCmd(
     cmd: string,
     options: ExecOptions,
     onData?: (data: string) => void
-): Promise<ExecException | undefined> {
-    const err = await new Promise<ExecException | null>((resolve) => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const proc = exec(cmd, options, (err, _stdout, _stderr) => {
+): Promise<Result<string, ExecException>> {
+    return await new Promise((resolve) => {
+        const proc = exec(cmd, options, (err, stdout: string, _stderr) => {
             if (err !== null) {
-                resolve(err);
+                resolve({ status: "err", result: err });
             } else {
-                resolve(null);
+                resolve({ status: "ok", result: stdout });
             }
         });
 
@@ -84,6 +112,4 @@ async function runCmd(
             proc.stderr?.on("data", onData);
         }
     });
-
-    return err ?? undefined;
 }

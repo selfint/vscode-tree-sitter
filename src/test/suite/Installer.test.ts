@@ -23,34 +23,38 @@ suite("Installer Test Suite", function () {
     });
 
     test("Parsers compatibility", async () => {
-        const parsers: [string, string[] | undefined][] = [
-            ["tree-sitter-rust", undefined],
-            ["tree-sitter-typescript", ["typescript", "tsx"]],
-            ["tree-sitter-go", undefined],
-            ["tree-sitter-python", undefined],
-            ["tree-sitter-javascript", undefined],
-            ["tree-sitter-html", undefined],
-            ["tree-sitter-c", undefined],
-            ["tree-sitter-cpp", undefined],
-            ["tree-sitter-c-sharp", undefined],
+        const parsers: [string, [string | undefined, string] | undefined][] = [
             ["tree-sitter-bash", undefined],
-            // ["tree-sitter-haskell", undefined],  // uses language version 14, we use 13
+            ["tree-sitter-c", undefined],
+            ["tree-sitter-c-sharp", [undefined, "tree-sitter-c_sharp"]],
+            ["tree-sitter-cpp", undefined],
+            ["tree-sitter-go", undefined],
+            // ["tree-sitter-haskell", undefined], // error in library
+            ["tree-sitter-html", undefined],
             ["tree-sitter-java", undefined],
+            ["tree-sitter-javascript", undefined],
             ["tree-sitter-julia", undefined],
+            ["tree-sitter-python", undefined],
+            ["tree-sitter-rust", undefined],
+            ["tree-sitter-typescript", ["tsx", "tree-sitter-tsx"]],
+            ["tree-sitter-typescript", ["typescript", "tree-sitter-typescript"]],
         ];
 
         await Promise.all(
-            parsers.map(async ([parserName, symbols]) => {
+            parsers.map(async ([npmPackageName, args]) => {
                 if (tempParsersDir === undefined) {
                     throw new Error("temp dir was not assigned");
                 }
+
+                const subdirectory = args?.[0];
+                const parserName = args?.[1];
 
                 let number = 0;
                 const downloaded = await vscode.window.withProgress(
                     {
                         location: vscode.ProgressLocation.Notification,
                         cancellable: false,
-                        title: `Installing ${parserName}`,
+                        title: `Installing ${npmPackageName}`,
                     },
                     async (progress) => {
                         if (tempParsersDir === undefined) {
@@ -58,33 +62,27 @@ suite("Installer Test Suite", function () {
                         }
                         return await vscodeTreeSitter.Installer.downloadParser(
                             tempParsersDir,
-                            parserName,
+                            npmPackageName,
+                            subdirectory,
                             (data) => progress.report({ message: data, increment: number++ })
                         );
                     }
                 );
 
-                assert.ok(downloaded);
+                assert.ok(downloaded, `failed to download ${parserName ?? npmPackageName}`);
 
-                const p = new vscodeTreeSitter.Parser();
-                if (symbols === undefined) {
-                    const language = vscodeTreeSitter.Installer.loadParser(tempParsersDir, parserName);
-                    assert.doesNotThrow(() => p.setLanguage(language));
-                } else {
-                    if (symbols.length === 0) {
-                        throw new Error("got 0 symbols");
-                    }
+                const parser = new vscodeTreeSitter.Parser();
+                const language = await vscodeTreeSitter.Installer.loadParser(
+                    tempParsersDir,
+                    npmPackageName,
+                    parserName
+                );
 
-                    for (const symbol of symbols) {
-                        const language = vscodeTreeSitter.Installer.loadParser(
-                            tempParsersDir,
-                            parserName,
-                            symbol
-                        );
-
-                        assert.doesNotThrow(() => p.setLanguage(language));
-                    }
-                }
+                assert.ok(language, `failed to load ${parserName ?? npmPackageName}`);
+                assert.doesNotThrow(
+                    () => parser.setLanguage(language),
+                    `failed to setLanguage ${parserName ?? npmPackageName}`
+                );
             })
         );
     });

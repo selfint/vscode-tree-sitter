@@ -2,23 +2,37 @@ import * as assert from "assert";
 
 import * as vscodeTreeSitter from "../../extension";
 
-//@ts-expect-error ignore missing types
-import Rust = require("tree-sitter-rust");
+suite("FileTree Test Suite", function () {
+    const parsersDir = "parsers";
 
-//@ts-expect-error ignore missing types
-import Typescript = require("tree-sitter-typescript");
+    test("Test Rust", async () => {
+        const text = "fn main() { }";
+        const rust = await vscodeTreeSitter.Installer.loadParser(parsersDir, "tree-sitter-rust");
+        assert.ok(rust);
 
-suite("FileTree Test Suite", () => {
-    test("Test Rust", () => {
-        const text = "fn main() {   }";
-        const tree = vscodeTreeSitter.FileTree.openFile(Rust, text);
+        const tree = await vscodeTreeSitter.FileTree.new(rust, text);
         assert.strictEqual(tree.tree.rootNode.text, text);
     });
 
-    test("Test Typescript", () => {
+    test("Test Typescript", async () => {
         const text = "function main() {}";
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        const tree = vscodeTreeSitter.FileTree.openFile(Typescript.typescript, text);
+        const typescript = await vscodeTreeSitter.Installer.loadParser(parsersDir, "tree-sitter-typescript");
+        assert.ok(typescript);
+
+        const tree = await vscodeTreeSitter.FileTree.new(typescript, text);
+        assert.strictEqual(tree.tree.rootNode.text, text);
+    });
+
+    test("Test TSX", async () => {
+        const text = "function main() { }";
+        const tsx = await vscodeTreeSitter.Installer.loadParser(
+            parsersDir,
+            "tree-sitter-typescript",
+            "tree-sitter-tsx"
+        );
+        assert.ok(tsx);
+
+        const tree = await vscodeTreeSitter.FileTree.new(tsx, text);
         assert.strictEqual(tree.tree.rootNode.text, text);
     });
 });
