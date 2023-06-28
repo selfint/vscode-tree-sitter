@@ -1,23 +1,26 @@
 import * as Installer from "./Installer";
 import * as vscode from "vscode";
 import { existsSync, rmSync } from "node:fs";
-import Parser = require("tree-sitter");
+import Parser = require("web-tree-sitter");
 import { FileTree } from "./FileTree";
+import { Language } from "web-tree-sitter";
 
 export { Parser, FileTree, Installer };
 
+type LanguageIdOverrides = Map<string, [string, [string, string] | undefined]>;
 async function getLanguage(
     parsersDir: string,
     languageId: string,
-    languageIdOverrides?: Map<string, [string, string | undefined]>
-): Promise<object | undefined> {
-    const [id, symbol] = languageIdOverrides?.get(languageId) ?? [languageId, undefined];
+    languageIdOverrides?: LanguageIdOverrides
+): Promise<Language | undefined> {
+    const [npmPackageName, override] = languageIdOverrides?.get(languageId) ?? [languageId, undefined];
+    const subdirectory = override?.[0];
+    const parserName = override?.[1] ?? npmPackageName;
 
-    const parserName = `tree-sitter-${id}`;
     const parserDir = Installer.getParserDir(parsersDir, parserName);
 
     const npmCommand = "npm";
-    const electronRebuildCommand = "electron-rebuild";
+    const treeSitterCli = "tree-sitter";
 
     if (!existsSync(parserDir)) {
         let number = 0;
@@ -30,10 +33,11 @@ async function getLanguage(
             async (progress) => {
                 return await Installer.downloadParser(
                     parsersDir,
-                    parserName,
+                    npmPackageName,
+                    subdirectory,
                     (data) => progress.report({ message: data, increment: number++ }),
                     npmCommand,
-                    electronRebuildCommand
+                    treeSitterCli
                 );
             }
         );
@@ -45,7 +49,7 @@ async function getLanguage(
         }
     }
 
-    const language = Installer.loadParser(parsersDir, parserName, symbol);
+    const language = await Installer.loadParser(parsersDir, npmPackageName, parserName);
     if (language === undefined) {
         void vscode.window.showErrorMessage(`Failed to load parser for language ${languageId}`);
         return undefined;
@@ -61,9 +65,9 @@ export class TreeViewer implements vscode.TextDocumentContentProvider {
 
     private fileTree: FileTree | undefined;
     private parsersDir: string;
-    private languageIdOverrides: Map<string, [string, string | undefined]> | undefined;
+    private languageIdOverrides: LanguageIdOverrides | undefined;
 
-    constructor(parsersDir: string, languageIdOverrides?: Map<string, [string, string | undefined]>) {
+    constructor(parsersDir: string, languageIdOverrides?: LanguageIdOverrides) {
         this.parsersDir = parsersDir;
         this.languageIdOverrides = languageIdOverrides;
     }
@@ -74,7 +78,7 @@ export class TreeViewer implements vscode.TextDocumentContentProvider {
             return;
         }
 
-        this.fileTree = FileTree.openFile(language, document.getText());
+        this.fileTree = await FileTree.openFile(language, document.getText());
         this.eventEmitter.fire(this.uri);
     }
 

@@ -2,7 +2,7 @@ import * as Installer from "./Installer";
 import * as vscode from "vscode";
 import { existsSync, mkdirSync } from "node:fs";
 import { join, resolve } from "node:path";
-import Parser = require("tree-sitter");
+import Parser = require("web-tree-sitter");
 import { FileTree } from "./FileTree";
 import { TreeViewer } from "./TreeViewer";
 
@@ -18,9 +18,9 @@ export function activate(context: vscode.ExtensionContext): void {
     const treeViewer = new TreeViewer(
         parsersDir,
         new Map([
-            ["typescriptreact", ["typescript", "tsx"]],
-            ["typescript", ["typescript", "typescript"]],
-            ["javascriptreact", ["javascript", undefined]],
+            ["typescriptreact", ["tree-sitter-typescript", ["tsx", "tree-sitter-tsx"]]],
+            ["typescript", ["tree-sitter-typescript", ["typescript", "tree-sitter-typescript"]]],
+            ["javascriptreact", ["tree-sitter-javascript", undefined]],
         ])
     );
 
