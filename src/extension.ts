@@ -4,15 +4,94 @@ import { existsSync, mkdirSync } from "node:fs";
 import { join, resolve } from "node:path";
 import Parser = require("web-tree-sitter");
 import { FileTree } from "./FileTree";
+import { Language } from "web-tree-sitter";
 import { TreeViewer } from "./TreeViewer";
 
 export { Parser, FileTree, Installer };
 
-export const didInit = new Promise<void>((resolve) => {
+export const parserFinishedInit = new Promise<void>((resolve) => {
     void Parser.init().then(() => {
         resolve();
     });
 });
+
+type LanguageIdOverride = {
+    npmPackageName: string;
+    parserName: string;
+    subdirectory?: string;
+};
+function getLanguageIdOverride(languageId: string): LanguageIdOverride {
+    const getLangIdConfig = (c: string): string | undefined =>
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        vscode.workspace.getConfiguration(`[${languageId}]`)[`vscode-tree-sitter.${c}`] ?? undefined;
+
+    const npmPackageName = getLangIdConfig("npmPackageName") ?? `tree-sitter-${languageId}`;
+    const parserName = getLangIdConfig("parserName") ?? npmPackageName;
+    const subdirectory = getLangIdConfig("subdirectory");
+
+    return {
+        npmPackageName,
+        parserName,
+        subdirectory,
+    };
+}
+
+function getIgnoredLanguageIds(): string[] {
+    return (
+        vscode.workspace
+            .getConfiguration("vscode-tree-sitter")
+            .get<string[] | undefined | null>("ignoredLanguageIds") ?? []
+    );
+}
+
+export async function getLanguage(parsersDir: string, languageId: string): Promise<Language | undefined> {
+    const ignoredLanguageIds = getIgnoredLanguageIds();
+    if (ignoredLanguageIds.includes(languageId)) {
+        return undefined;
+    }
+
+    await parserFinishedInit;
+
+    const { npmPackageName, subdirectory, parserName } = getLanguageIdOverride(languageId);
+    const parserWasmBindings = Installer.getWasmBindingsPath(parsersDir, npmPackageName, parserName);
+
+    const npmCommand = "npm";
+    const treeSitterCli = "tree-sitter";
+
+    if (!existsSync(parserWasmBindings)) {
+        let number = 0;
+        const downloaded = await vscode.window.withProgress(
+            {
+                location: vscode.ProgressLocation.Notification,
+                cancellable: false,
+                title: `Installing ${parserName}`,
+            },
+            async (progress) => {
+                return await Installer.downloadParser(
+                    parsersDir,
+                    npmPackageName,
+                    subdirectory,
+                    (data) => progress.report({ message: data, increment: number++ }),
+                    npmCommand,
+                    treeSitterCli
+                );
+            }
+        );
+
+        if (!downloaded) {
+            void vscode.window.showErrorMessage(`Failed to download parser for language ${languageId}`);
+            return undefined;
+        }
+    }
+
+    const language = await Installer.loadParser(parsersDir, npmPackageName, parserName);
+    if (language === undefined) {
+        void vscode.window.showErrorMessage(`Failed to load parser for language ${languageId}`);
+        return undefined;
+    }
+
+    return language;
+}
 
 export function activate(context: vscode.ExtensionContext): void {
     const parsersDir = resolve(join(context.extensionPath, "parsers"));
@@ -21,15 +100,7 @@ export function activate(context: vscode.ExtensionContext): void {
         mkdirSync(parsersDir, { recursive: true });
     }
 
-    const treeViewer = new TreeViewer(
-        parsersDir,
-        new Map([
-            ["typescriptreact", ["tree-sitter-typescript", ["tsx", "tree-sitter-tsx"]]],
-            ["typescript", ["tree-sitter-typescript", ["typescript", "tree-sitter-typescript"]]],
-            ["javascriptreact", ["tree-sitter-javascript", undefined]],
-            ["csharp", ["tree-sitter-c-sharp", undefined]],
-        ])
-    );
+    const treeViewer = new TreeViewer(parsersDir);
 
     context.subscriptions.push(
         vscode.workspace.registerTextDocumentContentProvider("vscode-tree-sitter", treeViewer)

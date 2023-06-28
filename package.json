@@ -24,7 +24,38 @@
         "command": "vscode-tree-sitter.test",
         "title": "VSCode Tree Sitter (debug command): Test tree-sitter on current file"
       }
-    ]
+    ],
+    "configuration": [
+      {
+        "title": "Vscode Tree Sitter",
+        "properties": {
+          "vscode-tree-sitter.ignoredLanguageIds": {
+            "type": "array",
+            "description": "List of language IDs to not load parsers for",
+            "default": [
+              "plaintext"
+            ]
+          }
+        }
+      }
+    ],
+    "configurationDefaults": {
+      "[csharp]": {
+        "vscode-tree-sitter.npmPackageName": "tree-sitter-c-sharp"
+      },
+      "[typescriptreact]": {
+        "vscode-tree-sitter.npmPackageName": "tree-sitter-typescript",
+        "vscode-tree-sitter.subdirectory": "tsx",
+        "vscode-tree-sitter.parserName": "tree-sitter-tsx"
+      },
+      "[typescript]": {
+        "vscode-tree-sitter.npmPackageName": "tree-sitter-typescript",
+        "vscode-tree-sitter.subdirectory": "typescript"
+      },
+      "[javascriptreact]": {
+        "vscode-tree-sitter.npmPackageName": "tree-sitter-javascript"
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "yarn install && yarn run bundle",

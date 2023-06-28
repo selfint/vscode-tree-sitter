@@ -2,9 +2,9 @@ import * as path from "path";
 import * as tar from "tar";
 import { ExecException, ExecOptions, exec } from "child_process";
 import { Language } from "web-tree-sitter";
-import { didInit } from "./extension";
 import { existsSync } from "fs";
 import { mkdir } from "fs/promises";
+import { parserFinishedInit } from "./extension";
 
 export function getParserDir(parsersDir: string, npmPackageName: string): string {
     return path.resolve(path.join(parsersDir, npmPackageName));
@@ -27,7 +27,7 @@ export async function loadParser(
         return undefined;
     } else {
         try {
-            await didInit;
+            await parserFinishedInit;
             return await Language.load(wasmPath);
         } catch (error) {
             console.log(`Failed to load ${wasmPath}, due to error:`);
